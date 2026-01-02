@@ -366,9 +366,18 @@ function buildCoreConfig(containerId, prefix){
     const div = document.createElement('div');
     div.className = 'core-config';
     div.id = `${prefix}_corecfg_${i}`;
+
+    // MAX POINTS PER RARITY
+    const MAX_POINTS = {
+      'Relic': 20,
+      'Ancient': 20, 
+      'Legendary': 14,
+      'Epic': 10
+    };
+
     div.innerHTML = `
       <label>Core ${i} Type:
-        <select id="${prefix}_core${i}_rarity" style="color:${i===1?'#d48f45':'#e0e0e0'}">
+        <select id="${prefix}_core${i}_rarity" onchange="updateMaxPoints('${prefix}', ${i})" style="color:${i===1?'#d48f45':'#e0e0e0'}">
           <option value="Relic">Relic (15 WP)</option>
           <option value="Ancient">Ancient (17 WP)</option>
           <option value="Legendary">Legendary (12 WP)</option>
@@ -394,6 +403,20 @@ function buildCoreConfig(containerId, prefix){
   autoCheckbox.addEventListener('change', updateVisibility);
   updateVisibility();
 }
+
+function updateMaxPoints(prefix, coreNum){
+  const rarity = document.getElementById(`${prefix}_core${coreNum}_rarity`).value;
+  const MAX_POINTS = { 'Relic': 20, 'Ancient': 20, 'Legendary': 14, 'Epic': 10 };
+  const maxPts = MAX_POINTS[rarity] || 20;
+  
+  const select = document.getElementById(`${prefix}_core${coreNum}_target`);
+  select.innerHTML = '';
+  for(let pts=10; pts<=maxPts; pts++){
+    select.innerHTML += `<option value="${pts}">${pts}</option>`;
+  }
+  select.value = Math.min(20, maxPts);
+}
+
 
 /* -------------------------
    Inventory helpers
